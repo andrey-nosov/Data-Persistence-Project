@@ -11,6 +11,8 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+
+    public Text SavedName;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -18,7 +20,7 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
-    
+        
     // Start is called before the first frame update
     void Start()
     {
@@ -36,7 +38,10 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        SavedName.text = NameSaver.EnteredName;
     }
+
 
     private void Update()
     {
@@ -60,6 +65,7 @@ public class MainManager : MonoBehaviour
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
+
     }
 
     void AddPoint(int point)
