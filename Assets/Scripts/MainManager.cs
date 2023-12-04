@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
+using JetBrains.Annotations;
+using UnityEngine.Rendering;
 
 public class MainManager : MonoBehaviour
 {
@@ -12,6 +15,8 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
 
+    public Text PreviousScoreText;
+
     public Text SavedName;
     public GameObject GameOverText;
     
@@ -19,6 +24,10 @@ public class MainManager : MonoBehaviour
     private int m_Points;
     
     private bool m_GameOver = false;
+
+    public static int finalScore;
+
+    public static int previousScore;
 
         
     // Start is called before the first frame update
@@ -68,6 +77,11 @@ public class MainManager : MonoBehaviour
 
     }
 
+    void Awake()
+    {
+        LoadPreviuosScore();
+    }
+
     void AddPoint(int point)
     {
         m_Points += point;
@@ -78,5 +92,35 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        finalScore = m_Points;
+        SavePreviousScore ();
     }
+
+    [System.Serializable]
+    class SaveScore
+    {
+        public int finalScore;
+    }
+
+    public void SavePreviousScore() {
+        SaveScore data = new SaveScore();
+        data.finalScore = finalScore;
+        string json = JsonUtility.ToJson(data);
+        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+    }
+
+    public void LoadPreviuosScore() {
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
+            {
+                string json = File.ReadAllText(path);
+                SaveScore data = JsonUtility.FromJson<SaveScore>(json);
+                finalScore = data.finalScore;
+                Debug.Log(finalScore);
+                PreviousScoreText.text = finalScore.ToString();
+            }
+    }
+    
+
+
 }
